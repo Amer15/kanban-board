@@ -1,6 +1,10 @@
 import { validateSchema } from "@/utils/validation";
 import { Request, Response } from "express";
-import { registerUserSchema, loginUserSchema } from "./validators";
+import {
+  registerUserSchema,
+  loginUserSchema,
+  refreshTokenSchema,
+} from "./validators";
 import bcrypt from "bcryptjs";
 import { db } from "@/db";
 import { userTable } from "@/db/models/user";
@@ -8,6 +12,7 @@ import { eq } from "drizzle-orm";
 import { CustomError } from "@/utils/custom_error";
 import jwt from "jsonwebtoken";
 import env from "@/env";
+import { TokenPayload } from "@/types/enums";
 
 export const getAllUsers = async (_: Request, res: Response) => {
   const users = await db.query.userTable.findMany({
@@ -33,10 +38,7 @@ export const register = async (req: Request, res: Response) => {
   });
 
   if (userExist) {
-    throw new CustomError(
-      "account already exist with this email",
-      400
-    );
+    throw new CustomError("account already exist with this email", 400);
   }
 
   await db.insert(userTable).values({
@@ -67,7 +69,7 @@ export const login = async (req: Request, res: Response) => {
     throw new CustomError("invalid credentials", 400);
   }
 
-  const tokenPayload: { id: number; email: string } = {
+  const tokenPayload: TokenPayload = {
     id: user.id,
     email: user.email,
   };
@@ -87,5 +89,39 @@ export const login = async (req: Request, res: Response) => {
     access_token,
     refresh_token,
     user: otherUserData,
+  });
+};
+
+export const getNewAccessToken = async (req: Request, res: Response) => {
+  const { refresh_token: refreshToken } = validateSchema(
+    refreshTokenSchema,
+    req.body
+  );
+
+  const payload = jwt.verify(
+    refreshToken,
+    env.REFRESH_TOKEN_SECRET
+  ) as TokenPayload;
+
+  const user = await db.query.userTable.findFirst({
+    where: eq(userTable.id, payload.id),
+  });
+
+  if (!user) {
+    throw new CustomError("invalid token", 403);
+  }
+
+  const tokenPayload: TokenPayload = {
+    id: user.id,
+    email: user.email,
+  };
+
+  const access_token = jwt.sign(tokenPayload, env.JWT_SECRET_KEY, {
+    expiresIn: env.TOKEN_LIFE as jwt.SignOptions["expiresIn"],
+  });
+
+  res.status(200).json({
+    message: "success",
+    access_token,
   });
 };

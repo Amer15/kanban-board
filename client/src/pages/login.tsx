@@ -9,7 +9,7 @@ const LoginPage = () => {
 
   return (
     <section className="min-h-screen flex justify-center items-center">
-      <div className="bg-white shadow-lg border border-gray-200 w-96 mx-auto rounded-md py-6 px-4">
+      <div className="bg-white shadow-lg border border-gray-200 w-[90%] md:w-96 mx-auto rounded-md py-6 px-4">
         {activeTab === "login" ? (
           <LoginForm tabChangeHandler={selectTabHandler} />
         ) : (

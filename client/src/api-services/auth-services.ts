@@ -70,7 +70,7 @@ export const login = async ({
 
 export const getRefreshToken = async (refresh_token: string) => {
   try {
-    const response = await axiosInstance.post(`/customers/refresh-token`, {
+    const response = await axiosInstance.post(`/users/refresh-token`, {
       refresh_token,
     });
 

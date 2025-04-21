@@ -15,11 +15,16 @@ export const taskSchema = z.object({
     .min(6, "title must be at least 6 characters")
     .max(200, "title must not exceed 200 characters"),
   description: z
-    .string()
-    .min(6, "description must be at least 6 characters")
-    .max(500, "description must not exceed 500 characters")
-    .nullable()
-    .optional(),
+    .union([
+      z
+        .string()
+        .min(6, "description must be at least 6 characters")
+        .max(500, "description must not exceed 500 characters"),
+      z.literal(""),
+      z.null(),
+      z.undefined(),
+    ])
+    .transform((val) => (val === "" ? null : val)),
 });
 
 export type TaskFormData = z.infer<typeof taskSchema>;
@@ -43,7 +48,6 @@ const TaskModal = ({ onClose }: { onClose: () => void }) => {
         return;
       }
       setSubmitting(true);
-      console.log("Submitted data:", data);
       await addTask({
         ...data,
         description: data.description ?? null,
