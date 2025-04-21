@@ -69,15 +69,15 @@ const TaskModal = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-md w-[400px] shadow-lg relative">
-        <h2 className="text-xl font-bold mb-4 font-poppins">Create Task</h2>
+      <div className="bg-white p-6 rounded-md w-[400px] shadow-lg relative mx-4 md:mx-0">
+        <h2 className="text-lg md:text-xl font-bold mb-4 font-poppins">Create Task</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <input
               type="text"
               {...register("title")}
               placeholder="Title"
-              className="w-full p-2 border rounded border-gray-400"
+              className="w-full p-2 border rounded border-gray-400 text-sm md:text-base"
             />
             {errors.title && (
               <p className="text-sm text-red-500 mt-1">
@@ -89,7 +89,7 @@ const TaskModal = ({ onClose }: { onClose: () => void }) => {
             <textarea
               {...register("description")}
               placeholder="Description (optional)"
-              className="w-full p-2 border rounded border-gray-400"
+              className="w-full p-2 border rounded border-gray-400 text-sm text:base"
               rows={4}
             />
             {errors.description && (
@@ -102,14 +102,14 @@ const TaskModal = ({ onClose }: { onClose: () => void }) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border  bg-slate-300 text-slate-500 hover:bg-slate-200 rounded-full text-base min-h-"
+              className="px-4 py-2 border  bg-slate-300 text-slate-500 hover:bg-slate-200 rounded-full text-sm md:text-base min-h-"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="px-4 py-2 bg-slate-900 text-slate-100 hover:bg-slate-700 rounded-full text-base min-h-10"
+              className="px-4 py-2 bg-slate-900 text-slate-100 hover:bg-slate-700 rounded-full text-sm md:text-base min-h-10"
             >
               {submitting ? <BeatLoader size={8} color="#ffffff" /> : "Submit"}
             </button>
