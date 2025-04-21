@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+import "express-async-errors"
 import { userRouter } from "@/features/users/routes";
 import { taskRouter } from "@/features/tasks/routes";
 import { errorHandler } from "./middlewares/error_handler";
