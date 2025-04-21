@@ -37,5 +37,7 @@ A full-stack Kanban board application built with modern web technologies, having
   - `npx drizzle-kit generate` (generates schema migrations)
   - `npx drizzle-kit push` (push migrations and sync with database)
 - after the above steps, it's time to run the project. We run client and server projects separately in two terminals for better debugging
-- open one terminal at the client folder and another at the server folder, and run the same command in both terminals: `npm run dev`
+- open one terminal at the client folder and another at the server folder
+- run `npm i` in both terminals to install all necessary packages
+- after the above step, run the same command in both terminals: `npm run dev`
 - that's it, now you can test the app and check their logs and debug them separately in their respective terminals
