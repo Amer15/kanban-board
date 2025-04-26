@@ -1,6 +1,12 @@
 import axios from "axios";
 import { useUserStore } from "../store/user-store";
 import { getRefreshToken } from "../api-services/auth-services";
+import { logoutHandler } from "../utils/navigator";
+import { AxiosRequestConfig } from "axios";
+
+export type CustomAxiosRequestConfig = AxiosRequestConfig & {
+  _retry?: boolean;
+};
 
 const baseURL = import.meta.env.VITE_API_BASEURL;
 
@@ -25,8 +31,9 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    console.log(`Token Error`);
-    const originalRequest = error.config;
+    console.log(`start of error block!`);
+    const originalRequest = error.config as CustomAxiosRequestConfig;
+    console.log({ ...originalRequest });
 
     if (
       error.response &&
@@ -36,17 +43,22 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refresh_token = useUserStore((state) => state.refresh_token);
+        const refresh_token = useUserStore.getState().refresh_token;
         if (!refresh_token) {
-          return Promise.reject("failed to get refresh token");
+          logoutHandler();
+          return Promise.reject(error);
         }
         await getRefreshToken(refresh_token);
         const newAccessToken = useUserStore.getState().access_token;
-        console.log(`new access token: ${newAccessToken}`);
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        if (originalRequest.headers) {
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        }
+
         return axiosInstance(originalRequest);
-      } catch (error) {
-        return Promise.reject(error);
+      } catch (err) {
+        logoutHandler();
+        return Promise.reject(err);
       }
     }
 

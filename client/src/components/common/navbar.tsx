@@ -1,11 +1,10 @@
 import { LogOutIcon } from "lucide-react";
 import { useUserStore } from "../../store/user-store";
-import { useNavigate } from "react-router-dom";
+import { navigateTo } from "../../utils/navigator";
 
 const Navbar = () => {
   const user = useUserStore((state) => state.user);
   const removeUser = useUserStore((state) => state.removeUser);
-  const navigate = useNavigate();
 
   return (
     <header className="p-2 font-poppins border border-b-slate-300">
@@ -19,7 +18,7 @@ const Navbar = () => {
             className="bg-slate-900 text-slate-100 px-5 py-2 rounded-full text-xs md:text-sm flex justify-center items-center gap-2 hover:bg-slate-800 transition-colors duration-200"
             onClick={() => {
               removeUser();
-              navigate("/login");
+              navigateTo("/login", { replace: true });
             }}
           >
             <LogOutIcon size={15} />

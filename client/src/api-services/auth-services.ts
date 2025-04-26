@@ -1,5 +1,4 @@
 import axios, { AxiosError } from "axios";
-import { axiosInstance } from "../config/axios-config";
 import { useUserStore } from "../store/user-store";
 import { AuthData } from "../types";
 
@@ -20,7 +19,6 @@ export const registerUser = async ({
     });
   } catch (error) {
     if (error instanceof AxiosError) {
-      console.log(error.message);
       if (
         error.response?.data?.message
       ) {
@@ -70,7 +68,7 @@ export const login = async ({
 
 export const getRefreshToken = async (refresh_token: string) => {
   try {
-    const response = await axiosInstance.post(`/users/refresh-token`, {
+    const response = await axios.post(`/users/refresh-token`, {
       refresh_token,
     });
 
